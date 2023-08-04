@@ -4,11 +4,6 @@ const sequelize = require('../config/db-config');
 const User = sequelize.define(
     'user',
     {
-        name: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            unique: false,
-        },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -26,5 +21,7 @@ const User = sequelize.define(
         tableName: 'users',
     },
 );
+
+User.sync();
 
 module.exports = User;

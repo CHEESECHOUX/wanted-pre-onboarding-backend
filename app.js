@@ -1,8 +1,10 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const authRouter = require('./src/routes/auth');
+
 const app = express();
 const port = 3000;
 const sequelize = require('./src/config/db-config');
-const User = require('./src/models/user');
 
 const corsOptions = {
     origin: ['http://localhost:3000'],
@@ -19,8 +21,10 @@ sequelize
         console.error('MySQL 연결 실패:', err);
     });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(authRouter);
 
 // 에러 처리
 app.use((err, req, res, next) => {
