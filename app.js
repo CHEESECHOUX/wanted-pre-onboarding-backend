@@ -1,10 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const authRouter = require('./src/routes/auth');
+const authRouter = require('./routes/auth');
 
 const app = express();
 const port = 3000;
-const sequelize = require('./src/config/db-config');
+const sequelize = require('./config/db-config');
 
 const corsOptions = {
     origin: ['http://localhost:3000'],

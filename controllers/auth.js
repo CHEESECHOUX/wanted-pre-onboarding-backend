@@ -10,6 +10,16 @@ exports.signup = async (req, res) => {
             throw new Error('이메일과 비밀번호를 입력해주세요.');
         }
 
+        const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!EMAIL_REGEX.test(email)) {
+            throw new Error('올바른 이메일 형식이 아닙니다.');
+        }
+
+        const MIN_PASSWORD_LENGTH = 8;
+        if (password.length < MIN_PASSWORD_LENGTH) {
+            throw new Error('비밀번호는 8자 이상이어야 합니다.');
+        }
+
         // 비밀번호 암호화
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -31,7 +41,7 @@ exports.signup = async (req, res) => {
         if (error.name === 'ConflictException') {
             res.status(409).json({ error: error.message });
         } else {
-            res.status(500).json({ error: '회원가입에 실패하였습니다.' });
+            res.status(500).json({ error: error.message });
         }
     }
 };
