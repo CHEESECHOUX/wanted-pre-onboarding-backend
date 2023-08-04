@@ -130,6 +130,6 @@ dist
 .pnp.*
 
 # config
-/src/config/
+/config/
 
 util/database.js
