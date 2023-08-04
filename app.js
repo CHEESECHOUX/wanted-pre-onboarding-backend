@@ -7,6 +7,21 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
+
+const MysqlConfig = require("./src/config/mysql-config");
+
+const mysql = require("mysql");
+const connection = mysql.createConnection(MysqlConfig);
+
+connection.connect((err) => {
+  if (err) {
+    console.error("MySQL 연결 실패:", err);
+  }
+  if (!err) {
+    console.log("MySQL 연결 성공");
+  }
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
