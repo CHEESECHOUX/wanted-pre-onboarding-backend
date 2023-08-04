@@ -1,6 +1,21 @@
 {
-  "dependencies": {
-    "express": "^4.18.2",
-    "mysql": "^2.18.1"
-  }
+    "dependencies": {
+        "express": "^4.18.2",
+        "mysql": "^2.18.1",
+        "mysql2": "^3.6.0",
+        "sequelize": "^6.32.1"
+    },
+    "name": "wanted-pre-onboarding",
+    "description": "npm install mysql",
+    "version": "1.0.0",
+    "main": "app.js",
+    "devDependencies": {
+        "prettier": "^3.0.1"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
 }
