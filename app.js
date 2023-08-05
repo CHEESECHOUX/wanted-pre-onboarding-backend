@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
 
 const app = express();
 const port = 3000;
@@ -16,6 +17,7 @@ sequelize
     .authenticate()
     .then(() => {
         console.log('MySQL 연결 성공');
+        return sequelize.sync();
     })
     .catch(err => {
         console.error('MySQL 연결 실패:', err);
@@ -25,6 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(authRouter);
+app.use(postRouter);
 
 // 에러 처리
 app.use((err, req, res, next) => {

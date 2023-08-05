@@ -64,6 +64,8 @@ exports.login = async (req, res) => {
             throw new Error('해당 이메일의 사용자를 찾을 수 없습니다.');
         }
 
+        const MIN_PASSWORD_LENGTH = 8;
+
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             throw new Error('비밀번호가 일치하지 않습니다.');
