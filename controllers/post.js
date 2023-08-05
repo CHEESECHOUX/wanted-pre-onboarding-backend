@@ -9,13 +9,11 @@ exports.createPost = async (req, res) => {
         }
 
         const { title, content } = req.body;
-
         if (!title || !content) {
             throw new Error('제목과 내용을 입력해주세요');
         }
 
         const existingPost = await Post.findOne({ where: { title } });
-
         if (existingPost) {
             throw new ConflictException('동일한 제목의 게시물이 존재합니다.');
         }
@@ -42,7 +40,7 @@ exports.getPosts = async (req, res) => {
         const { count, rows } = await Post.findAndCountAll({
             limit: pageSize,
             offset,
-            order: [['createdAt', 'DESC']], // 내림차순(최신순)
+            order: [['updatedAt', 'DESC']], // 내림차순(최신순)
         });
 
         const totalPages = Math.ceil(count / pageSize);
@@ -70,6 +68,39 @@ exports.getPostById = async (req, res) => {
         if (!post) {
             return res.status(404).json({ error: '해당 게시글을 찾을 수 없습니다' });
         }
+
+        res.status(200).json(post);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.updatePost = async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const { title, content } = req.body;
+
+        if (!title || !content) {
+            throw new Error('제목과 내용을 입력해주세요');
+        }
+
+        const post = await Post.findByPk(postId);
+
+        if (!post) {
+            return res.status(404).json({ error: '해당 게시글을 찾을 수 없습니다' });
+        }
+
+        // 게시글의 작성자와 현재 사용자의 ID를 비교
+        const userId = req.userId;
+
+        if (post.userId !== userId) {
+            return res.status(403).json({ error: '게시글 작성자만 수정할 수 있습니다.' });
+        }
+
+        post.title = title;
+        post.content = content;
+        await post.save();
 
         res.status(200).json(post);
     } catch (error) {
