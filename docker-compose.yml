@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+    # MySQL
+    mysql:
+        image: mysql:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: ${DB_NAME}
+        ports:
+            - '${DB_PORT}:3306'
+        volumes:
+            - mysql_data:/var/lib/mysql
+
+    # Node.js
+    nodejs:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+            DB_HOST: ${DB_HOST}
+            DB_PORT: ${DB_PORT}
+            DB_PASSWORD: ${DB_PASSWORD}
+            DB_NAME: ${DB_NAME}
+            DB_USERNAME: ${DB_USERNAME}
+        ports:
+            - '3000:3000' # Node.js 앱이 사용하는 포트
+        depends_on:
+            - mysql
+
+volumes:
+    mysql_data: # MySQL 데이터를 저장할 볼륨 정의
