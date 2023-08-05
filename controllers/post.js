@@ -3,9 +3,14 @@ const ConflictException = require('../exceptions/conflict-exception');
 
 exports.createPost = async (req, res) => {
     try {
-        const { title, content, userId } = req.body;
+        const userId = req.userId;
+        if (!userId) {
+            throw new Error('사용자를 찾지 못했습니다');
+        }
 
-        if (!title || !content || !userId) {
+        const { title, content } = req.body;
+
+        if (!title || !content) {
             throw new Error('제목과 내용을 입력해주세요');
         }
 
