@@ -108,3 +108,29 @@ exports.updatePost = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.softDeletePost = async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const post = await Post.findByPk(postId);
+
+        if (!post) {
+            return res.status(404).json({ error: '해당 게시글을 찾을 수 없습니다' });
+        }
+
+        // 게시글의 작성자와 현재 사용자의 ID를 비교
+        const userId = req.userId;
+
+        if (post.userId !== userId) {
+            return res.status(403).json({ error: '게시글 작성자만 삭제할 수 있습니다.' });
+        }
+
+        // 소프트 삭제
+        await post.destroy({ force: false });
+
+        res.status(200).json({ message: '게시글이 성공적으로 삭제되었습니다.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
