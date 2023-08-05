@@ -61,3 +61,19 @@ exports.getPosts = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.getPostById = async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const post = await Post.findByPk(postId);
+
+        if (!post) {
+            return res.status(404).json({ error: '해당 게시글을 찾을 수 없습니다' });
+        }
+
+        res.status(200).json(post);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
