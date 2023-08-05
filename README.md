@@ -12,6 +12,10 @@ npm install -g sequelize-cli
 
 npm install --save-dev prettier
 
+# config
+
+npm install dotenv
+
 # 비밀번호 암호화
 
 npm install bcrypt

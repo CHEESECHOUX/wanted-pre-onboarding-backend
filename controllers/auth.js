@@ -73,8 +73,10 @@ exports.login = async (req, res) => {
             throw new Error('비밀번호는 8자 이상이어야 합니다.');
         }
 
-        const JWT_SECRET_KEY = 'your-secret-key';
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: '1h' });
+        const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+        const JWT_EXP = process.env.JWT_EXP;
+
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: JWT_EXP });
 
         res.status(200).json({ user, token });
     } catch (error) {

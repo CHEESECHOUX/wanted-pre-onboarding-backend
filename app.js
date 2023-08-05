@@ -1,17 +1,12 @@
 const express = require('express');
+require('dotenv').config({ path: './.env' });
 const bodyParser = require('body-parser');
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
+const sequelize = require('./config/db-config');
 
 const app = express();
 const port = 3000;
-const sequelize = require('./config/db-config');
-
-const corsOptions = {
-    origin: ['http://localhost:3000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-};
 
 sequelize
     .authenticate()
@@ -23,11 +18,14 @@ sequelize
         console.error('MySQL 연결 실패:', err);
     });
 
+const corsOptions = {
+    origin: ['http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-app.use(authRouter);
-app.use(postRouter);
 
 // 에러 처리
 app.use((err, req, res, next) => {
@@ -58,6 +56,9 @@ app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
     next();
 });
+
+app.use(authRouter);
+app.use(postRouter);
 
 app.listen(port, () => {
     console.log(`서버가 http://localhost:${port}에서 실행 중입니다.`);
