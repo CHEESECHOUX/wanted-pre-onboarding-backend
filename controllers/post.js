@@ -81,7 +81,7 @@ exports.updatePost = async (req, res) => {
         const postId = req.params.postId;
         const { title, content } = req.body;
 
-        if (!title || !content) {
+        if (!title && !content) {
             throw new Error('제목과 내용을 입력해주세요');
         }
 
@@ -98,8 +98,13 @@ exports.updatePost = async (req, res) => {
             return res.status(403).json({ error: '게시글 작성자만 수정할 수 있습니다.' });
         }
 
-        post.title = title;
-        post.content = content;
+        if (title) {
+            post.title = title;
+        }
+
+        if (content) {
+            post.content = content;
+        }
         await post.save();
 
         res.status(200).json(post);
