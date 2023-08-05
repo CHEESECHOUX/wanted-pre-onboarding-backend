@@ -32,3 +32,32 @@ exports.createPost = async (req, res) => {
         }
     }
 };
+
+exports.getPosts = async (req, res) => {
+    try {
+        const page = req.query.page || 1; // 쿼리 파라미터로 페이지 번호 가져옴 / 없으면 기본 값은 1
+        const pageSize = 10; // 한 페이지당 게시글 10개
+
+        const offset = (page - 1) * pageSize;
+        const { count, rows } = await Post.findAndCountAll({
+            limit: pageSize,
+            offset,
+            order: [['createdAt', 'DESC']], // 내림차순(최신순)
+        });
+
+        const totalPages = Math.ceil(count / pageSize);
+
+        if (page < 1 || page > totalPages) {
+            return res.status(400).json({ error: '유효하지 않은 페이지 번호입니다.' });
+        }
+
+        res.status(200).json({
+            currentPage: page, // 현재 페이지 번호
+            totalPages, // 전체 페이지 수
+            posts: rows, // 요청한 페이지의 게시글 목록
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
