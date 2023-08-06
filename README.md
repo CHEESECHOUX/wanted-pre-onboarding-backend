@@ -7,7 +7,7 @@
 <br/>
 
 # ⚙️ 애플리케이션의 실행 방법
-**1. Project Clone**
+### 1. Project Clone
 <details>
 <summary>.env 파일</summary>
 <div markdown="1">
@@ -19,7 +19,7 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_PASSWORD=MySQL비밀번호
 DB_NAME=MySQL데이터베이스이름
-DB_USERNAME=
+DB_USERNAME=MySQL사용자이름
 
 JWT_SECRET_KEY=MYSECRETKEY
 JWT_EXP=1h
@@ -33,8 +33,9 @@ JWT_EXP=1h
 git clone https://github.com/CHEESECHOUX/wanted-pre-onboarding-backend.git
 ```
 
-**2. Project Setup**<br/>
+### 2. Project Setup<br/>
 
+#### 2-1. Docker로 Project Setup
 Docker Compose 명령어
 ```
 docker-compose up -d
@@ -93,6 +94,17 @@ $ npm install body-parser
 </details>
 <br/>
 
+#### 2-2. Node.js로 로컬 환경에서 Project Setup
+
+```
+npm install
+```
+
+```
+npm start
+```
+<br/>
+
 # 🛠 데이터베이스 테이블 구조
 ![원티드 프리온보딩](https://github.com/CHEESECHOUX/wanted-pre-onboarding-backend/assets/89918678/6f229643-c0f5-4894-899c-4a3affa1c45e)
 <br/>
@@ -123,7 +135,7 @@ $ npm install body-parser
 <br/>
 
 # 👩🏻‍💻 구현 방법 및 이유
-### [구현한 API의 동작을 촬영한 데모 영상 링크]()
+### [구현한 API의 동작을 촬영한 데모 영상 링크](https://drive.google.com/file/d/1JXqavXWHLiE3aONElVUuZeIJeZZr0s5m/view?usp=drive_link)
 
 ## User
 **1. 사용자 회원가입**<br/>
@@ -165,6 +177,10 @@ $ npm install body-parser
 - 작성자만 해당 게시글 삭제
 <br/>
 
+### - Exceptions<br/>
+과제의 모든 코드는 ConflictException과 ValidationError를 활용하여 에러 처리를 구현하였습니다.
+<br/>
+<br/>
 
 ## 1. MVC (Model-View-Controller) 패턴으로 코드 작성
 - **모델(Model), 라우트(Route), 컨트롤러(Controller)로 구분하여 작성**했습니다.
@@ -179,7 +195,18 @@ $ npm install body-parser
 - 저장된 **비밀번호가 유출되어도 원래 비밀번호를 알아낼 수 없기 때문에 사용**했습니다.
 <br/>
 
-## 3. 게시글 목록 조회 시 Pagnation 기능 구현
+## 3. JWT(Jason Web Token)
+
+JWT를 선택한 이유는 토큰 기반의 인증 방식으로, 서버에 사용자의 세션 정보를 저장할 필요가 없어 **간편하게 인증이 가능**하고, 클라이언트 측에 토큰이 저장되기 때문에 서버의 부담이 줄어들어 **확장성과 분산 시스템 지원에 용이**합니다.
+
+토큰 자체에 정보를 포함하므로 토큰의 크기가 커질 수 있고, 토큰이 유출될 경우 보안 취약점이 발생할 수 있지만, 이러한 문제를 최소화하기 위해 **토큰에는 필수적인 사용자 정보인 ID정보만을 담고 있으며, 유효 시간을 한 시간으로 제한**하여 보안을 강화하였습니다.
+
+또한, **auth-Middleware를 사용**해 **인증된 사용자에게만 특정 라우터에 접근 권한을 부여**하여 보다 안전한 서비스를 제공하도록 구현하였습니다.
+<br/>
+<br/>
+<br/>
+
+## 4. 게시글 목록 조회 시 Pagnation 기능
 
 **1. 전체 게시글 중 업데이트 최신순으로 게시글 10개 조회**<br/>
 
@@ -194,7 +221,7 @@ $ npm install body-parser
 - **페이지 번호가 1보다 작거나, 전체 페이지 수보다 클 경우 에러가 발생**합니다.
 <br/>
 
-## 4. 사용자, 게시글 모두 소프트 삭제(soft Delete) 처리
+## 5. 사용자, 게시글 모두 소프트 삭제(soft Delete) 처리
 
 **소프트 삭제는 데이터를 완전히 삭제하는 것이 아니라, 해당 데이터의 레코드에 삭제된 상태를 표시**하는 방법입니다.<br/>
 사용자나 게시글을 삭제 처리할 경우 **deletedAt 열에 삭제 시점의 타임스탬프가 기록**됩니다.
