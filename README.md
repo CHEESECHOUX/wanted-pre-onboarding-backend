@@ -10,11 +10,44 @@
 # ⚙️ 1. 애플리케이션의 실행 방법
 <a id="⚙️-애플리케이션의-실행-방법"></a>
 ### 1. Project Clone
+```
+git clone https://github.com/CHEESECHOUX/wanted-pre-onboarding-backend.git
+```
+
+### 2. Project Setup<br/>
+
 <details>
-<summary>.env 파일</summary>
+<summary>2-1. Docker로 Project Setup</summary>
 <div markdown="1">
   
--   .env
+#### 1. .env 환경설정 (Sequelize와 연결, JWT)
+  
+```
+DB_HOST=mysql
+DB_PORT=3306
+DB_PASSWORD=password
+DB_NAME=wanted
+DB_USERNAME=root
+
+JWT_SECRET_KEY=MYSECRETKEY
+JWT_EXP=1h
+```
+
+#### 2. Docker Compose 명령어
+```
+docker-compose up -d
+```
+
+<br/>
+</div>
+</details>
+<br/>
+
+<details>
+<summary>2-2. Node.js로 로컬 환경에서 Project Setup</summary>
+<div markdown="1">
+  
+#### 1. .env 환경설정 (Sequelize와 연결, JWT)
   
 ```
 DB_HOST=127.0.0.1
@@ -27,39 +60,19 @@ JWT_SECRET_KEY=MYSECRETKEY
 JWT_EXP=1h
 ```
 
-<br/>
-</div>
-</details>
-
-```
-git clone https://github.com/CHEESECHOUX/wanted-pre-onboarding-backend.git
-```
-
-### 2. Project Setup<br/>
-
-#### 2-1. Docker로 Project Setup
-Docker Compose 명령어
-```
-docker-compose up -d
-```
-
-<details>
-<summary>Docker 이미지 빌드 & 해당 이미지로 컨테이너 실행 명령어</summary>
-<div markdown="2">
-
-```
-docker build . -t wanted-jisoo-choi
-```
-```
-docker container run -d -p 3000:3000 --env-file ./.env wanted-jisoo-choi
-```
-<br/>
-</div>
-</details>
-
+#### 2. Node.js 애플리케이션의 종속성 패키지 설치
 ```
 npm install
 ```
+
+#### 3. Node.js 애플리케이션 실행
+```
+npm start
+```
+<br/>
+</div>
+</details>
+<br/>
 
 <details>
 <summary>설치한 패키지 목록</summary>
@@ -96,17 +109,6 @@ $ npm install body-parser
 </details>
 <br/>
 
-#### 2-2. Node.js로 로컬 환경에서 Project Setup
-
-```
-npm install
-```
-
-```
-npm start
-```
-<br/>
-
 # 🛎 2. 엔드포인트 호출 방법
 
 ## User
@@ -123,7 +125,7 @@ POST /signup
 
 **과제 2. 사용자 로그인**
 ```
-POST /signup
+POST /login
       -d '{ "email": "test@test.com", "password": "testpassword" }
 ```
 - 이메일 조건: @ 포함<br/>
@@ -157,14 +159,14 @@ GET /post?page=1
 
 **과제 5. 특정 게시글 조회**<br/>
 ```
-GET /api/v1/post/:postId
+GET /post/:postId
 ```
 - 게시글 ID로 특정 게시글 조회
 <br/>
 
 **과제 6. 특정 게시글 수정**<br/>
 ```
-PATCH /post/:id
+PATCH /post/:postId
     -H "Authorization: Bearer ${token}" 
     -d '{ "title": "게시글 제목 수정", "content": "게시글 내용 수정" }
 ```
