@@ -5,8 +5,10 @@
 - Language & Framework : JavaScript ES6, Express(Node.js v18.16.1)<br/>
 - Database : MySQL(v8.0.33), sequelize<br/>
 <br/>
+<br/>
 
-# ⚙️ 애플리케이션의 실행 방법
+# ⚙️ 1. 애플리케이션의 실행 방법
+<a id="⚙️-애플리케이션의-실행-방법"></a>
 ### 1. Project Clone
 <details>
 <summary>.env 파일</summary>
@@ -105,9 +107,89 @@ npm start
 ```
 <br/>
 
-# 🛠 데이터베이스 테이블 구조
+# 🛎 2. 엔드포인트 호출 방법
+
+## User
+**과제 1. 사용자 회원가입**<br/>
+```
+POST /signup
+      -d '{ "email": "test@test.com", "password": "testpassword" }
+```
+
+- 이메일 조건: @ 포함<br/>
+- 비밀번호 조건: 8자 이상<br/>
+- 이메일은 고유한 값(중복 불가능)
+<br/>
+
+**과제 2. 사용자 로그인**
+```
+POST /signup
+      -d '{ "email": "test@test.com", "password": "testpassword" }
+```
+- 이메일 조건: @ 포함<br/>
+- 비밀번호 조건: 8자 이상<br/>
+- 로그인 시 JWT 토큰 사용자에게 반환
+<br/>
+
+## POST
+**과제 3. 새로운 게시글 생성**<br/>
+```
+POST /post
+    -H "Authorization: Bearer ${token}"" 
+    -d '{ "title": "게시글 제목", "content": "게시글 내용" }
+```
+- 게시글을 작성하려면 로그인시 반환된 JWT토큰이 필요합니다.
+- 제목, 내용 모두 입력 시 게시글 생성 가능
+- 제목은 고유한 값(중복 불가능)
+<br/>
+
+**과제 4. 게시글 목록 조회(Pagenation)** <br/>
+
+1. **전체 페이지**에서 업데이트 최신순 게시글 10개 조회
+```
+GET /post
+```
+2. **사용자가 지정한 페이지**의 업데이트 최신순 게시글 10개 조회
+```
+GET /post?page=1
+```
+<br/>
+
+**과제 5. 특정 게시글 조회**<br/>
+```
+GET /api/v1/post/:postId
+```
+- 게시글 ID로 특정 게시글 조회
+<br/>
+
+**과제 6. 특정 게시글 수정**<br/>
+```
+PATCH /post/:id
+    -H "Authorization: Bearer ${token}" 
+    -d '{ "title": "게시글 제목 수정", "content": "게시글 내용 수정" }
+```
+- 게시글을 수정하려면 로그인시 반환된 JWT토큰이 필요합니다.
+  - 해당 게시글 작성자만 게시글을 수정할 수 있습니다.
+<br/>
+
+**과제 7. 특정 게시글 삭제**<br/>
+```
+DELETE /post/:postId
+      -H "Authorization: Bearer ${token}" 
+```
+- 게시글을 삭제하려면 로그인시 반환된 JWT토큰이 필요합니다.
+  - 해당 게시글 작성자만 게시글을 삭제할 수 있습니다.
+<br/>
+
+# 🛠 3. 데이터베이스 테이블 구조
 ![원티드 프리온보딩](https://github.com/CHEESECHOUX/wanted-pre-onboarding-backend/assets/89918678/6f229643-c0f5-4894-899c-4a3affa1c45e)
 <br/>
+<br/>
+
+## 🔗 테이블 관계
+### User와 Post 테이블은 일대다 관계<br/>
+- 게시판은 다수의 게시글을 갖고 있고, 각 게시글은 하나의 사용자에 의해 작성됩니다.<br/>
+- 과제의 API 요구 사항에 맞게 테이블을 최소화하여 만들었습니다.<br/>
 <br/>
 
 ## 🔗 관계형 데이터베이스(MySQL)를 선택한 이유
@@ -126,60 +208,10 @@ npm start
 비 관계형 데이터베이스(NoSQL)는 빠르게 변하는 대량의 데이터를 다루는 데 강점이 있고, 비구조화 또는 반구조화된 데이터를 다루거나 스키마를 유연하게 변경해야 하는 경우 자주 사용되기 때문에, 관계형 데이터베이스 중에 가장 널리 사용되고 있는 MySQL을 선택했습니다.
 <br/>
 <br/>
-
-## 🔗 테이블 관계
-### User와 Post 테이블은 일대다 관계<br/>
-- 게시판은 다수의 게시글을 갖고 있고, 각 게시글은 하나의 사용자에 의해 작성됩니다.<br/>
-- 과제의 API 요구 사항에 맞게 테이블을 최소화하여 만들었습니다.<br/>
-<br/>
 <br/>
 
-# 👩🏻‍💻 구현 방법 및 이유
+# 👩🏻‍💻 4. 구현 방법 및 이유
 ### [구현한 API의 동작을 촬영한 데모 영상 링크](https://drive.google.com/file/d/1JXqavXWHLiE3aONElVUuZeIJeZZr0s5m/view?usp=drive_link)
-
-## User
-**1. 사용자 회원가입**<br/>
-
-- 이메일과 비밀번호에 대한 유효성 검사<br/>
-      - 이메일 조건: @ 포함<br/>
-      - 비밀번호 조건: 8자 이상<br/>
-
-- 이메일은 고유한 값(중복 불가능)
-- bcypt를 이용해 비밀번호 암호화<br/>
-
-**2. 사용자 로그인**
-- 로그인 시 JWT 토큰 사용자에게 반환
-<br/>
-
-## POST
-**1. 새로운 게시글 생성**<br/>
-
-- 제목, 내용 모두 입력 시 게시글 생성
-- 제목은 고유한 값(중복 불가능)
-
-**2. 게시글 목록 조회(Pagenation)** <br/>
-
-1. **전체 페이지**에서 업데이트 최신순 게시글 10개 조회
-2. **사용자가 지정한 페이지**의 업데이트 최신순 게시글 10개 조회
-
-**3. 특정 게시글 조회**<br/>
-
-- 게시글 ID로 특정 게시글 조회
-
-**4. 특정 게시글 수정**<br/>
-
-- 게시글 ID와 수정 내용으로 해당 게시글 수정
-- 작성자만 해당 게시글 수정
-
-**5. 특정 게시글 삭제**<br/>
-
-- 게시글 ID로 특정 게시글 삭제
-- 작성자만 해당 게시글 삭제
-<br/>
-
-### - Exceptions<br/>
-과제의 모든 코드는 ConflictException과 ValidationError를 활용하여 에러 처리를 구현하였습니다.
-<br/>
 <br/>
 
 ## 1. MVC (Model-View-Controller) 패턴으로 코드 작성
@@ -236,7 +268,7 @@ JWT를 선택한 이유는 토큰 기반의 인증 방식으로, 서버에 사�
 <br/>
 <br/>
 
-# 📡 API 명세
+# 📡 5. API 명세
 ### [API Documentation 링크](https://documenter.getpostman.com/view/20782433/2s9XxyRYjz)
 
 |기능|EndPoint|메소드|
@@ -249,4 +281,8 @@ JWT를 선택한 이유는 토큰 기반의 인증 방식으로, 서버에 사�
 |특정 게시글(ID) 조회|/post/:postId|GET|
 |특정 게시글(ID) 수정|/post/:postId|PATCH|
 |특정 게시글(ID) 삭제|/post/:postId|DELETE|
+<br/>
+<br/>
+
+
 
