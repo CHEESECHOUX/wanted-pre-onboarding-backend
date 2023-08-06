@@ -1,31 +1,44 @@
 version: '3.8'
+
+networks:
+    app-tier:
+        driver: bridge
+
 services:
-    # MySQL
+    # MySQL 컨테이너 설정
     mysql:
-        image: mysql:latest
-        environment:
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-            MYSQL_DATABASE: ${DB_NAME}
+        image: mysql:8.0
+        container_name: mysql_db
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        expose:
+            - '3306'
         ports:
-            - '${DB_PORT}:3306'
+            - '3306:3306'
+        networks:
+            - app-tier
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: wanted
+            MYSQL_USER: root
+            MYSQL_PASSWORD: password
         volumes:
             - mysql_data:/var/lib/mysql
 
-    # Node.js
-    nodejs:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        environment:
-            DB_HOST: ${DB_HOST}
-            DB_PORT: ${DB_PORT}
-            DB_PASSWORD: ${DB_PASSWORD}
-            DB_NAME: ${DB_NAME}
-            DB_USERNAME: ${DB_USERNAME}
-        ports:
-            - '3000:3000' # Node.js 앱이 사용하는 포트
+    # Node.js 앱 컨테이너 설정
+    node_app:
         depends_on:
-            - mysql
+            - mysql # MySQL 컨테이너가 먼저 시작되도록 지정
+        build:
+            context: . # 현재 디렉토리를 빌드 컨텍스트로 지정
+            dockerfile: Dockerfile # 사용할 Dockerfile 지정
+        command: bash -c 'while !</dev/tcp/mysql/3306; do sleep 1; done; npm start'
+        container_name: node_app
+        restart: always
+        ports:
+            - '3000:3000'
+        networks:
+            - app-tier
 
 volumes:
-    mysql_data: # MySQL 데이터를 저장할 볼륨 정의
+    mysql_data: # MySQL 데이터를 보존하는 볼륨
