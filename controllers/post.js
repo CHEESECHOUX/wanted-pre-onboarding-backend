@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const ConflictException = require('../exceptions/conflict-exception');
+const ValidationError = require('../exceptions/validation-error');
 
 exports.createPost = async (req, res) => {
     try {
@@ -10,7 +11,7 @@ exports.createPost = async (req, res) => {
 
         const { title, content } = req.body;
         if (!title || !content) {
-            throw new Error('제목과 내용을 입력해주세요');
+            throw new ValidationError('제목과 내용을 입력해주세요');
         }
 
         const existingPost = await Post.findOne({ where: { title } });
@@ -23,7 +24,10 @@ exports.createPost = async (req, res) => {
         res.status(201).json(post);
     } catch (error) {
         console.error(error);
-        if (error.name === 'ConflictException') {
+
+        if (error.name === 'ValidationError') {
+            res.status(400).json({ error: error.message });
+        } else if (error.name === 'ConflictException') {
             res.status(409).json({ error: error.message });
         } else {
             res.status(500).json({ error: error.message });
@@ -82,7 +86,7 @@ exports.updatePost = async (req, res) => {
         const { title, content } = req.body;
 
         if (!title && !content) {
-            throw new Error('제목과 내용을 입력해주세요');
+            throw new ValidationError('제목이나 내용을 입력해주세요');
         }
 
         const post = await Post.findByPk(postId);
@@ -110,7 +114,12 @@ exports.updatePost = async (req, res) => {
         res.status(200).json(post);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: error.message });
+
+        if (error instanceof ValidationError) {
+            res.status(400).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
     }
 };
 
