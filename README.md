@@ -17,7 +17,7 @@ git clone https://github.com/CHEESECHOUX/wanted-pre-onboarding-backend.git
 ### 2. Project Setup<br/>
 
 <details>
-<summary>2-1. Docker로 Project Setup</summary>
+<summary>2-1. Docker로 Project Setup (클릭)</summary>
 <div markdown="1">
   
 #### 1. .env 환경설정 (Sequelize와 연결, JWT)
@@ -44,7 +44,7 @@ docker-compose up -d
 <br/>
 
 <details>
-<summary>2-2. Node.js로 로컬 환경에서 Project Setup</summary>
+<summary>2-2. Node.js로 로컬 환경에서 Project Setup (클릭)</summary>
 <div markdown="1">
   
 #### 1. .env 환경설정 (Sequelize와 연결, JWT)
@@ -65,17 +65,18 @@ JWT_EXP=1h
 npm install
 ```
 
-#### 3. Node.js 애플리케이션 실행
-```
-npm start
-```
 <br/>
 </div>
 </details>
 <br/>
 
+### 3. Project Start
+```
+npm start
+```
+
 <details>
-<summary>설치한 패키지 목록</summary>
+<summary>설치한 패키지 목록 (클릭)</summary>
 <div markdown="2">
 
 1. express<br/>
@@ -184,7 +185,7 @@ DELETE /post/:postId
 <br/>
 
 # 🛠 3. 데이터베이스 테이블 구조
-![원티드 프리온보딩](https://github.com/CHEESECHOUX/wanted-pre-onboarding-backend/assets/89918678/6f229643-c0f5-4894-899c-4a3affa1c45e)
+![원티드 프리온보딩](https://github.com/CHEESECHOUX/wanted-pre-onboarding-backend/assets/89918678/be4e5dde-634e-4754-ba23-2211de2e726e)
 <br/>
 <br/>
 
