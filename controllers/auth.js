@@ -2,24 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ConflictException = require('../exceptions/conflict-exception');
-const ValidationError = require('../exceptions/validation-error');
 const handleControllerError = require('../utils/error-handler');
-
-const validateEmailAndPassword = (email, password) => {
-    if (!email || !password) {
-        throw new ValidationError('이메일과 비밀번호를 입력해주세요.');
-    }
-
-    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!EMAIL_REGEX.test(email)) {
-        throw new ValidationError('올바른 이메일 형식이 아닙니다. (@가 포함되어야 합니다)');
-    }
-
-    const MIN_PASSWORD_LENGTH = 8;
-    if (password.length < MIN_PASSWORD_LENGTH) {
-        throw new ValidationError('비밀번호는 8자 이상이어야 합니다.');
-    }
-};
+const validateEmailAndPassword = require('../utils/validateEmailAndPassword');
 
 exports.signup = async (req, res) => {
     try {
@@ -45,6 +29,7 @@ exports.signup = async (req, res) => {
 
         res.status(201).json(user);
     } catch (error) {
+        // 중앙 에러 처리 함수를 사용하여 예외 처리
         handleControllerError(error, res);
     }
 };
@@ -65,6 +50,7 @@ exports.login = async (req, res) => {
             throw new Error('비밀번호가 일치하지 않습니다.');
         }
 
+        // JWT 토큰 생성 및 반환
         const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
         const JWT_EXP = process.env.JWT_EXP;
 

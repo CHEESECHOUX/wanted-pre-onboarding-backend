@@ -24,6 +24,7 @@ exports.createPost = async (req, res) => {
 
         res.status(201).json(post);
     } catch (error) {
+        // 중앙 에러 처리 함수를 사용하여 예외 처리
         handleControllerError(error, res);
     }
 };
