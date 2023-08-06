@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ConflictException = require('../exceptions/conflict-exception');
 const ValidationError = require('../exceptions/validation-error');
+const handleControllerError = require('../utils/error-handler');
 
 const validateEmailAndPassword = (email, password) => {
     if (!email || !password) {
@@ -44,15 +45,7 @@ exports.signup = async (req, res) => {
 
         res.status(201).json(user);
     } catch (error) {
-        console.error(error);
-
-        if (error.name === 'ValidationError') {
-            res.status(400).json({ error: error.message });
-        } else if (error.name === 'ConflictException') {
-            res.status(409).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: error.message });
-        }
+        handleControllerError(error, res);
     }
 };
 
@@ -79,12 +72,6 @@ exports.login = async (req, res) => {
 
         res.status(200).json({ user, token });
     } catch (error) {
-        console.error(error);
-
-        if (error instanceof ValidationError) {
-            res.status(400).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: error.message });
-        }
+        handleControllerError(error, res);
     }
 };

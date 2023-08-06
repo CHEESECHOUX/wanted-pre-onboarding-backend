@@ -1,6 +1,7 @@
 const Post = require('../models/post');
 const ConflictException = require('../exceptions/conflict-exception');
 const ValidationError = require('../exceptions/validation-error');
+const handleControllerError = require('../utils/error-handler');
 
 exports.createPost = async (req, res) => {
     try {
@@ -23,15 +24,7 @@ exports.createPost = async (req, res) => {
 
         res.status(201).json(post);
     } catch (error) {
-        console.error(error);
-
-        if (error.name === 'ValidationError') {
-            res.status(400).json({ error: error.message });
-        } else if (error.name === 'ConflictException') {
-            res.status(409).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: error.message });
-        }
+        handleControllerError(error, res);
     }
 };
 
@@ -59,8 +52,7 @@ exports.getPosts = async (req, res) => {
             posts: rows, // 요청한 페이지의 게시글 목록
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
+        handleControllerError(error, res);
     }
 };
 
@@ -75,8 +67,7 @@ exports.getPostById = async (req, res) => {
 
         res.status(200).json(post);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
+        handleControllerError(error, res);
     }
 };
 
@@ -113,13 +104,7 @@ exports.updatePost = async (req, res) => {
 
         res.status(200).json(post);
     } catch (error) {
-        console.error(error);
-
-        if (error instanceof ValidationError) {
-            res.status(400).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: error.message });
-        }
+        handleControllerError(error, res);
     }
 };
 
@@ -144,7 +129,6 @@ exports.softDeletePost = async (req, res) => {
 
         res.status(200).json({ message: '게시글이 성공적으로 삭제되었습니다.' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
+        handleControllerError(error, res);
     }
 };
