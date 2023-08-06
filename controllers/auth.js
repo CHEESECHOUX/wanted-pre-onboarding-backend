@@ -4,23 +4,28 @@ const User = require('../models/user');
 const ConflictException = require('../exceptions/conflict-exception');
 const ValidationError = require('../exceptions/validation-error');
 
+const validateEmailAndPassword = (email, password) => {
+    if (!email || !password) {
+        throw new ValidationError('이메일과 비밀번호를 입력해주세요.');
+    }
+
+    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!EMAIL_REGEX.test(email)) {
+        throw new ValidationError('올바른 이메일 형식이 아닙니다. (@가 포함되어야 합니다)');
+    }
+
+    const MIN_PASSWORD_LENGTH = 8;
+    if (password.length < MIN_PASSWORD_LENGTH) {
+        throw new ValidationError('비밀번호는 8자 이상이어야 합니다.');
+    }
+};
+
 exports.signup = async (req, res) => {
     try {
         const { email, password } = req.body;
+
         // 이메일과 비밀번호 유효성 검사
-        if (!email || !password) {
-            throw new ValidationError('이메일과 비밀번호를 입력해주세요.');
-        }
-
-        const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!EMAIL_REGEX.test(email)) {
-            throw new ValidationError('올바른 이메일 형식이 아닙니다. (@가 포함되어야 합니다)');
-        }
-
-        const MIN_PASSWORD_LENGTH = 8;
-        if (password.length < MIN_PASSWORD_LENGTH) {
-            throw new ValidationError('비밀번호는 8자 이상이어야 합니다.');
-        }
+        validateEmailAndPassword(email, password);
 
         // 비밀번호 암호화
         const salt = await bcrypt.genSalt();
@@ -55,25 +60,15 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         // 이메일과 비밀번호 유효성 검사
-        if (!email || !password) {
-            throw new ValidationError('이메일과 비밀번호를 입력해주세요.');
-        }
-        const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!EMAIL_REGEX.test(email)) {
-            throw new ValidationError('올바른 이메일 형식이 아닙니다.');
-        }
+        validateEmailAndPassword(email, password);
 
         const user = await User.findOne({ where: { email } });
         if (!user) {
             throw new Error('해당 이메일의 사용자를 찾을 수 없습니다.');
         }
 
-        const MIN_PASSWORD_LENGTH = 8;
-
         const isPasswordMatch = await bcrypt.compare(password, user.password);
-        if (password.length < MIN_PASSWORD_LENGTH) {
-            throw new ValidationError('비밀번호는 8자 이상이어야 합니다.');
-        } else if (!isPasswordMatch) {
+        if (!isPasswordMatch) {
             throw new Error('비밀번호가 일치하지 않습니다.');
         }
 
